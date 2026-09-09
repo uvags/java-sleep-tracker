@@ -16,7 +16,7 @@ class ChronotypeSleepAnalyzerTest {
                 createSession("07.09.26 10:00", "07.09.26 11:00"),
                 createSession("08.09.26 14:00", "08.09.26 15:00")
         );
-        assertEquals(Chronotype.PIGEON, new ChronotypeSleepAnalyzer()
+        assertEquals("голубь", new ChronotypeSleepAnalyzer()
                 .apply(sessions)
                 .value());
     }
@@ -26,7 +26,7 @@ class ChronotypeSleepAnalyzerTest {
         List<SleepingSession> sessions = List.of(
                 createSession("07.09.26 23:15", "08.09.26 09:30")
         );
-        assertEquals(Chronotype.OWL, new ChronotypeSleepAnalyzer()
+        assertEquals("сова", new ChronotypeSleepAnalyzer()
                 .apply(sessions)
                 .value());
     }
@@ -36,7 +36,7 @@ class ChronotypeSleepAnalyzerTest {
         List<SleepingSession> sessions = List.of(
                 createSession("07.09.26 21:00", "08.09.26 06:00")
         );
-        assertEquals(Chronotype.LARK, new ChronotypeSleepAnalyzer()
+        assertEquals("жаворонок", new ChronotypeSleepAnalyzer()
                 .apply(sessions)
                 .value());
     }
@@ -46,7 +46,7 @@ class ChronotypeSleepAnalyzerTest {
         List<SleepingSession> sessions = List.of(
                 createSession("07.09.26 22:30", "08.09.26 08:00")
         );
-        assertEquals(Chronotype.PIGEON, new ChronotypeSleepAnalyzer()
+        assertEquals("голубь", new ChronotypeSleepAnalyzer()
                 .apply(sessions)
                 .value());
     }
@@ -57,7 +57,7 @@ class ChronotypeSleepAnalyzerTest {
                 createSession("07.09.26 23:15", "08.09.26 09:30"),
                 createSession("08.09.26 21:00", "09.09.26 06:00")
         );
-        assertEquals(Chronotype.PIGEON, new ChronotypeSleepAnalyzer()
+        assertEquals("голубь", new ChronotypeSleepAnalyzer()
                 .apply(sessions)
                 .value());
     }
@@ -70,7 +70,7 @@ class ChronotypeSleepAnalyzerTest {
                 createSession("08.09.26 23:45", "09.09.26 10:00")
         );
 
-        assertEquals(Chronotype.OWL, new ChronotypeSleepAnalyzer()
+        assertEquals("сова", new ChronotypeSleepAnalyzer()
                 .apply(sessions)
                 .value());
     }

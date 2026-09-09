@@ -58,7 +58,7 @@ class SleepTrackerAppTest {
         assertTrue(result.contains("Средняя длительность сна в минутах: 495"));
         assertTrue(result.contains("Сессий с плохим сном: 0"));
         assertTrue(result.contains("Бессонные ночи: 0"));
-        assertTrue(result.contains("Хронотип (сова, жаворонок, голубь): PIGEON"));
+        assertTrue(result.contains("Хронотип (сова, жаворонок, голубь): голубь"));
     }
 
     @Test
