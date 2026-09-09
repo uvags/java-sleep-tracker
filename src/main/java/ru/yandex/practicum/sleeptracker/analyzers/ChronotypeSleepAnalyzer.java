@@ -30,7 +30,7 @@ public class ChronotypeSleepAnalyzer implements SleepAnalyzer {
     // Здесь каждая сессия соответствует одному периоду сна (ночной или дневной сон), иначе непонятно какой тип
     // Для определения типа мы учитываем лишь ночные сессии сна
     @Override
-    public SleepAnalysisResult<Chronotype> apply(List<SleepingSession> sessions) {
+    public SleepAnalysisResult<String> apply(List<SleepingSession> sessions) {
         long owlCount = sessions.stream()
                 .filter(this::isNightSession) // убираем "неночные" сессии
                 .filter(s ->
@@ -61,6 +61,6 @@ public class ChronotypeSleepAnalyzer implements SleepAnalyzer {
             result = Chronotype.PIGEON;
         }
 
-        return new SleepAnalysisResult<>("Хронотип (сова, жаворонок, голубь)", result);
+        return new SleepAnalysisResult<>("Хронотип (сова, жаворонок, голубь)", result.getDisplayName());
     }
 }
