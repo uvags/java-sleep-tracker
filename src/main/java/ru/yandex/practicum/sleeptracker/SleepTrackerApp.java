@@ -1,6 +1,7 @@
 package ru.yandex.practicum.sleeptracker;
 import ru.yandex.practicum.sleeptracker.analyzers.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,7 +15,18 @@ public class SleepTrackerApp {
 
     public static void main(String[] args) {
         String filePath = args.length > 0 ? args[0] : "src/main/resources/sleep_log.txt";
+
         try {
+            Path path = Path.of(filePath);
+            if (args.length > 0 && filePath.trim().isEmpty()) {
+                throw new IOException("Пустой путь к файлу");
+            }
+            if (!Files.exists(path)) {
+                throw new FileNotFoundException("Файла не существует: "+ filePath);
+            }
+            if (Files.isDirectory(path)) {
+                throw new FileNotFoundException("Путь указывает на директорию, а не файл: " + filePath);
+            }
             // спинок функций, которые по очереди будут применяться к данным
             List<SleepingSession> sessions = readSessions(Path.of(filePath));
             List<SleepAnalyzer> analyzers = List.of(
