@@ -87,4 +87,24 @@ class SleepTrackerAppTest {
         String result = runAppAndCaptureSystemOutOutput("05.09.26 23:15;06.09.26 07:30;BAD\n");
         assertTrue(result.contains("Сессий с плохим сном: 1"));
     }
+
+    @Test
+    void errorWhenFileNotExist() {
+        String result = runAppAndCaptureSystemErrOutput("sleeptrackerthisfilenotexistihope.txt");
+        assertTrue(result.contains("Не удалось прочитать файл"));
+    }
+
+    @Test
+    void errorWhenFilePathIsEmpty() {
+        String result = runAppAndCaptureSystemErrOutput("");
+        assertTrue(result.contains("Пустой путь к файлу"));
+    }
+
+    @Test
+    void errorWhenFilePathIsDirectory() throws Exception {
+        Path directory = tempDir.resolve("sleep_tracker_temp_dir");
+        Files.createDirectory(directory);
+        String result = runAppAndCaptureSystemErrOutput(directory.toString());
+        assertTrue(result.contains("Путь указывает на директорию, а не файл"));
+    }
 }
