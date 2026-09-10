@@ -48,6 +48,13 @@ class SleepTrackerAppTest {
         return error.toString(StandardCharsets.UTF_8);
     }
 
+    private String runAppWithFileContentAndCaptureSystemErrOutput(String content) throws Exception {
+        Path file = tempDir.resolve("sleep_tracker_test_file");
+        Files.writeString(file, content, StandardCharsets.UTF_8);
+
+        return runAppAndCaptureSystemErrOutput(file.toString());
+    }
+
     @Test
     void printsAllStatistics() throws Exception {
         String result = runAppAndCaptureSystemOutOutput("05.09.26 23:15;06.09.26 07:30;GOOD\n");
@@ -107,4 +114,35 @@ class SleepTrackerAppTest {
         String result = runAppAndCaptureSystemErrOutput(directory.toString());
         assertTrue(result.contains("Путь указывает на директорию, а не файл"));
     }
+
+    @Test
+    void errorWhenWakeBeforeBeginningOfSleep() throws Exception {
+        String result = runAppWithFileContentAndCaptureSystemErrOutput(
+                "06.09.26 23:15;05.09.26 07:30;BAD");
+        assertTrue(result.contains("Время начала сна должно быть раньше окончания сна"));
+    }
+
+    @Test
+    void errorWhenInvalidDateFormat() throws Exception {
+        String result = runAppWithFileContentAndCaptureSystemErrOutput(
+                "05.09.26 23:15;06.5009.26 07:30;BAD");
+        assertTrue(result.contains("Неверный формат времени в строке данных в файле"));
+    }
+
+    @Test
+    void errorWhenInvalidSleepQuality() throws Exception {
+        String result = runAppWithFileContentAndCaptureSystemErrOutput(
+                "05.09.26 23:15;06.09.26 07:30;notexistedsleepquaality");
+        assertTrue(result.contains("Неверно указано качество сна"));
+    }
+
+    @Test
+    void errorWhenNotAllDataGiven() throws Exception {
+        String result = runAppWithFileContentAndCaptureSystemErrOutput(
+                "05.09.26 23:15;BAD");
+        assertTrue(result.contains("Неверный формат строки данных в файле"));
+    }
+
+
+
 }
