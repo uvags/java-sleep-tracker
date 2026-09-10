@@ -23,7 +23,7 @@ public class SleepTrackerApp {
                 throw new IOException("Пустой путь к файлу");
             }
             if (!Files.exists(path)) {
-                throw new FileNotFoundException("Файла не существует: "+ filePath);
+                throw new FileNotFoundException("Файла не существует: " + filePath);
             }
             if (Files.isDirectory(path)) {
                 throw new FileNotFoundException("Путь указывает на директорию, а не файл: " + filePath);
