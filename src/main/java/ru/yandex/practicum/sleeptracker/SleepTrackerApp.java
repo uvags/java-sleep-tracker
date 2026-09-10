@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -41,12 +42,15 @@ public class SleepTrackerApp {
             analyzers.stream().map(a -> a.apply(sessions)).forEach(System.out::println);
         } catch (IOException e) {
             System.err.println("Не удалось прочитать файл: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Неверные данные в файле: " + e.getMessage());
         }
     }
 
     private static List<SleepingSession> readSessions(Path path) throws IOException {
         try (Stream<String> lines = Files.lines(path)) {
             return lines
+                    .filter(line -> !line.isBlank()) // пустую строку/просто пробелы пропустим
                     .map(SleepTrackerApp::parseLine)
                     .toList();
         }
@@ -54,9 +58,31 @@ public class SleepTrackerApp {
 
     private static SleepingSession parseLine(String line) {
         String[] parts = line.split(";"); // разбиваем строку на начало сна, конец сна, характеристику сна
-        LocalDateTime start = LocalDateTime.parse(parts[0].trim(), DATE_TIME_FORMATTER);
-        LocalDateTime end = LocalDateTime.parse(parts[1].trim(), DATE_TIME_FORMATTER);
-        SleepQuality quality = SleepQuality.valueOf(parts[2].trim());
+
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Неверный формат строки данных в файле: " + line);
+        }
+
+        LocalDateTime start;
+        LocalDateTime end;
+        SleepQuality quality;
+
+        try {
+            start = LocalDateTime.parse(parts[0].trim(), DATE_TIME_FORMATTER);
+            end = LocalDateTime.parse(parts[1].trim(), DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Неверный формат времени в строке данных в файле: " + line);
+        }
+
+        if (!end.isAfter(start)) {
+            throw new IllegalArgumentException("Время начала сна должно быть раньше окончания сна");
+        }
+
+        try {
+            quality = SleepQuality.valueOf(parts[2].trim());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Неверно указано качество сна: " + parts[2].trim());
+        }
 
         return new SleepingSession(start, end, quality);
     }
