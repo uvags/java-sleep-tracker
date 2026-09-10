@@ -18,14 +18,26 @@ public class SleeplessNightsAnalyzer implements SleepAnalyzer {
             return new SleepAnalysisResult<>("Бессонные ночи", 0L);
         }
 
-        LocalDateTime firstSleepStart = sessions.stream()
-                .map(SleepingSession::start)
-                .min(LocalDateTime::compareTo)
-                .orElseThrow();
-        LocalDateTime lastSleepEnd = sessions.stream()
-                .map(SleepingSession::end)
-                .max(LocalDateTime::compareTo)
-                .orElseThrow();
+        SleepLocalDateTimeBounds bounds = sessions.stream()
+                .collect(
+                        () -> new SleepLocalDateTimeBounds(
+                                sessions.getFirst().start(),
+                                sessions.getFirst().end()
+                        ),
+                        SleepLocalDateTimeBounds::accept,
+                        (left, right) -> {
+                            if (right.firstStart.isBefore(left.firstStart)) {
+                                left.firstStart = right.firstStart;
+                            }
+
+                            if (right.lastEnd.isAfter(left.lastEnd)) {
+                                left.lastEnd = right.lastEnd;
+                            }
+                        }
+                );
+
+        LocalDateTime firstSleepStart = bounds.getFirstStart();
+        LocalDateTime lastSleepEnd = bounds.getLastEnd();
 
         LocalDate firstNight = firstNight(firstSleepStart);
         LocalDate lastNight = lastNight(lastSleepEnd);
@@ -63,5 +75,34 @@ public class SleeplessNightsAnalyzer implements SleepAnalyzer {
         LocalDateTime nightEnd = LocalDateTime.of(night, NIGHT_END);
 
         return session.start().isBefore(nightEnd) && nightStart.isBefore(session.end());
+    }
+
+    // вспомогательный класс, чтобы при обходе не создавать новый массив, например
+    private static class SleepLocalDateTimeBounds {
+        private LocalDateTime firstStart;
+        private LocalDateTime lastEnd;
+
+        public SleepLocalDateTimeBounds(LocalDateTime firstStart, LocalDateTime lastEnd) {
+            this.firstStart = firstStart;
+            this.lastEnd = lastEnd;
+        }
+
+        public void accept(SleepingSession session) {
+            if (session.start().isBefore(firstStart)) {
+                firstStart = session.start();
+            }
+
+            if (session.end().isAfter(lastEnd)) {
+                lastEnd = session.end();
+            }
+        }
+
+        public LocalDateTime getFirstStart() {
+            return firstStart;
+        }
+
+        public LocalDateTime getLastEnd() {
+            return lastEnd;
+        }
     }
 }

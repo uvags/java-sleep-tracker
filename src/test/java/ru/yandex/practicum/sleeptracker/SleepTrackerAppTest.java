@@ -142,7 +142,4 @@ class SleepTrackerAppTest {
                 "05.09.26 23:15;BAD");
         assertTrue(result.contains("Неверный формат строки данных в файле"));
     }
-
-
-
 }
