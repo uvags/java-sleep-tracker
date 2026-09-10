@@ -1,7 +1,6 @@
 package ru.yandex.practicum.sleeptracker.analyzers;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.sleeptracker.Chronotype;
 import ru.yandex.practicum.sleeptracker.SleepingSession;
 
 import java.util.List;
