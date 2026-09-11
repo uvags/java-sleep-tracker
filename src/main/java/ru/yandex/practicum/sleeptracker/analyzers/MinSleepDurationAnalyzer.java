@@ -8,7 +8,7 @@ public class MinSleepDurationAnalyzer implements SleepAnalyzer {
     public SleepAnalysisResult<Long> apply(List<SleepingSession> sessions) {
         long min = sessions.stream()
                 .map(SleepingSession::getDurationMinutes)
-                .min((a, b) -> a.compareTo(b))
+                .min(Long::compareTo)
                 .orElse(0L);
 
         return new SleepAnalysisResult<>("Минимальная продолжительность сна в минутах", min);
